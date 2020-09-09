@@ -2,7 +2,10 @@
 
 namespace App\Http\Middleware;
 
+use App\User;
 use Closure;
+use Firebase\JWT\ExpiredException;
+use Firebase\JWT\JWT;
 use Illuminate\Contracts\Auth\Factory as Auth;
 
 class Authenticate
@@ -35,10 +38,25 @@ class Authenticate
      */
     public function handle($request, Closure $next, $guard = null)
     {
-        if ($this->auth->guard($guard)->guest()) {
-            return response('Unauthorized.', 401);
+        $token = $request->bearerToken();
+
+        if (!$token) {
+            // Unauthorized response if token not there
+            return response()->json(format_json(false, 'Token tidak ada.'), 401);
+        }
+        try {
+            $credentials = JWT::decode($token, env('JWT_SECRET'), ['HS256']);
+        } catch (ExpiredException $e) {
+            return response()->json(format_json(false, 'Token kadaluarsa.'), 400);
+        } catch (\Exception $e) {
+            return response()->json(format_json(false, 'Error ketika decoding token.'), 400);
         }
 
+
+        $user = User::find($credentials->sub);
+        // Now let's put the user in the request class so that you can grab it from there
+        $request->auth = $user;
+        $request->token = $token;
         return $next($request);
     }
 }

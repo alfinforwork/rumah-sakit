@@ -12,5 +12,15 @@
 */
 
 $router->get('/', function () use ($router) {
-    return $router->app->version();
+    $json = [
+        'message' => 'Selamat datang di website rumah sakit',
+        'version' => $router->app->version(),
+    ];
+    return response()->json($json);
 });
+$router->group(['middleware' => 'auth'], function () use ($router) {
+    $router->get('/tes', 'AuthController@index');
+    $router->get('/me', 'AuthController@me');
+});
+
+$router->post('/login', 'AuthController@authenticate');
