@@ -32,44 +32,41 @@ class AuthController extends BaseController
         $this->request = $request;
     }
 
-    protected function jwt(User $user)
-    {
-        $payload = [
-            'iss' => "lumen-jwt", // Issuer of the token
-            'sub' => $user->id, // Subject of the token
-            'iat' => time(), // Time when JWT was issued. 
-            'exp' => time() + 60 * 60 // Expiration time
-        ];
 
-        return JWT::encode($payload, env('JWT_SECRET'));
-    }
 
     public function authenticate(User $user)
     {
         $this->validate($this->request, [
-            'email'     => 'required|email',
+            'no_telp'     => 'required|numeric',
             'password'  => 'required'
         ]);
-        // Find the user by email
-        $user = User::where('email', $this->request->input('email'))->first();
+        // Find the user by no_telp
+        $user = User::where('no_telp', $this->request->input('no_telp'))->first();
+
         if (!$user) {
-            return response()->json(format_json(false, 'Email salah.'), 400);
+            return response()->json(format_json(false, 'No. HP salah.'), 400);
         }
         // Verify the password and generate the token
-        if (Hash::check($this->request->input('password'), $user->password)) {
+        if (hash('sha256', md5($this->request->input('no_telp')) . $user->password)) {
             $status = true;
             $message = 'Berhasil masuk';
             $token = $this->jwt($user);
             $data = $user;
             return response()->json(format_json($status, $message, $data, $token), 200);
-            // [
-            //     'status' => true,
-            //     'message' => 'Berhasil masuk',
-            //     'token' => $this->jwt($user),
-            //     'data' => $user
-            // ]
         }
         // Bad Request response
         return response()->json(format_json(false, 'Password salah.'), 400);
+    }
+
+    protected function jwt(User $user)
+    {
+        $payload = [
+            'iss' => "lumen-jwt", // Issuer of the token
+            'sub' => $user->id_rs, // Subject of the token
+            'iat' => time(), // Time when JWT was issued.
+            'exp' => time() + 60 * 60 // Expiration time
+        ];
+
+        return JWT::encode($payload, env('JWT_SECRET'));
     }
 }

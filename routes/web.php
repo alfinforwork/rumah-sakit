@@ -20,7 +20,7 @@ $router->get('/', function () use ($router) {
 });
 $router->group(['middleware' => 'auth'], function () use ($router) {
     $router->get('/tes', 'AuthController@index');
-    $router->get('/me', 'AuthController@me');
+    $router->get('/lupapassword', 'AuthController@me');
 });
 
 $router->post('/login', 'AuthController@authenticate');

@@ -52,7 +52,7 @@ class Authenticate
             return response()->json(format_json(false, 'Error ketika decoding token.'), 400);
         }
 
-
+        // dd(JWT::decode($token, env('JWT_SECRET'), ['HS256']));
         $user = User::find($credentials->sub);
         // Now let's put the user in the request class so that you can grab it from there
         $request->auth = $user;
