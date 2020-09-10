@@ -19,8 +19,12 @@ $router->get('/', function () use ($router) {
     return response()->json($json);
 });
 $router->group(['middleware' => 'auth'], function () use ($router) {
-    $router->get('/lupapassword', 'LupapasswordController@index');
+    $router->group(['prefix' => 'dashboard'], function () use ($router) {
+        $router->get('/data', 'DashboardController@index');
+        $router->get('/sampah_terlaris', 'DashboardController@sampah_terlaris');
+    });
 });
+$router->get('/lupapassword', 'LupapasswordController@index');
 
 $router->post('/login', 'AuthController@authenticate');
 
