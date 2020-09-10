@@ -38,7 +38,7 @@ class Authenticate
      */
     public function handle($request, Closure $next, $guard = null)
     {
-        $token = $request->bearerToken();
+        $token = $request->bearerToken() ? $request->bearerToken() : $request->input('token');
 
         if (!$token) {
             // Unauthorized response if token not there

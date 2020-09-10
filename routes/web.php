@@ -19,8 +19,11 @@ $router->get('/', function () use ($router) {
     return response()->json($json);
 });
 $router->group(['middleware' => 'auth'], function () use ($router) {
-    $router->get('/tes', 'AuthController@index');
-    $router->get('/lupapassword', 'AuthController@me');
+    $router->get('/lupapassword', 'LupapasswordController@index');
 });
 
 $router->post('/login', 'AuthController@authenticate');
+
+$router->get('/tes', function () use ($router) {
+    return view('email');
+});
