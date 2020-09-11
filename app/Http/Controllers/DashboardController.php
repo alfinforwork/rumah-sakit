@@ -6,9 +6,10 @@ use App\Gudang_sampah;
 use App\Jenis_sampah;
 use App\Jenis_sampah_rs;
 use App\Katalog_rs;
+use App\Katalog_rs_detail;
 use App\User;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -42,20 +43,12 @@ class DashboardController extends Controller
     public function sampah_terlaris()
     {
         $data_jwt = request()->auth;
-        $katalog_rs = Katalog_rs::all(); //where('id_rs', $data_jwt->id_rs)->where('id_status_penjualan_rs', 9)->get();
+        $katalog_rs = Katalog_rs::first();
+        $data = $katalog_rs->katalog_rs_detail()
+            ->with('katalog_rs')->selectRaw('count(id_katalog_rs) as jumlah,id_jenis_sampah_rs')->groupBy('id_jenis_sampah')->get();
+
+
         // ------------------------------------------------------------------------
-        $data_katalog_rs = [];
-        foreach ($katalog_rs as $k) {
-            foreach ($k->katalog_rs_detail() as $l) {
-                $k->jenis_sampah_rs[] = $k->katalog_rs_detail()->jenis_sampah_rs();
-            }
-            $k->katalog_rs_detail[] = $k->katalog_rs_detail();
-            $data_katalog_rs[] = $k;
-        }
-        // ------------------------------------------------------------------------
-        $json = [
-            'data_sampah_terlaris' => $data_katalog_rs,
-        ];
-        return response()->json(format_json(true, 'Berhasil menampilkan data', $json));
+        return response()->json(format_json(true, 'Berhasil menampilkan data', $data));
     }
 }

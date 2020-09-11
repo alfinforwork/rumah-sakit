@@ -16,6 +16,6 @@ class Katalog_rs extends Model
 
     public function katalog_rs_detail()
     {
-        return $this->hasMany('App\Katalog_rs_detail', 'id_katalog_rs', 'id_katalog_rs');
+        return $this->belongsToMany('App\Katalog_rs_detail', 'id_katalog_rs', 'id_katalog_rs');
     }
 }

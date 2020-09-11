@@ -16,7 +16,7 @@ class Katalog_rs_detail extends Model
 
     public function katalog_rs()
     {
-        return $this->belongsTo(Katalog_rs::class, 'id_katalog_rs', 'id_katalog_rs');
+        return $this->hasMany(Katalog_rs::class, 'id_katalog_rs', 'id_katalog_rs');
     }
     public function jenis_sampah_rs()
     {
