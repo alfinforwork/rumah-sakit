@@ -22,6 +22,8 @@ $router->group(['middleware' => 'auth'], function () use ($router) {
     $router->group(['prefix' => 'dashboard'], function () use ($router) {
         $router->get('/data', 'DashboardController@index');
         $router->get('/sampah_terlaris', 'DashboardController@sampah_terlaris');
+        $router->get('/statistik_katalog', 'DashboardController@statistik_katalog');
+        $router->get('/statistik_gudang', 'DashboardController@statistik_gudang');
     });
 });
 $router->get('/lupapassword', 'LupapasswordController@index');
